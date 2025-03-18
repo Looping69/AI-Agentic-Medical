@@ -1,0 +1,52 @@
+# LENY-AI Medical Application Bug Tracking
+
+## Routing Issues
+
+1. Multiple GoTrueClient instances detected in the same browser context
+   - This is a warning rather than an error
+   - Occurs when multiple Supabase client instances are created
+   - Should be fixed by ensuring only one client instance is used
+
+2. No routes matched location "/"
+   - Routes in App.tsx are not properly configured
+   - Home route is not being matched
+   - Check AppRoutes component in App.tsx
+
+3. No routes matched location "/login"
+   - Login route is not being matched
+   - Check AppRoutes component in App.tsx
+
+4. No routes matched location "/signup"
+   - Signup route is not being matched
+   - Check AppRoutes component in App.tsx
+
+## Authentication Issues
+
+1. Possible issue with AuthProvider nesting
+   - Error stack shows AuthProvider appears twice in component stack
+   - May be causing authentication context conflicts
+
+## Next Steps
+
+1. ✅ Fix routing configuration in App.tsx
+   - Fixed the useRoutes call by wrapping it in a proper if statement
+   - Added SimpleAuthProvider and SimpleAuthCheck components
+
+2. ✅ Ensure only one Supabase client instance is created
+   - Fixed import paths to use consistent auth context
+
+3. ✅ Check for duplicate AuthProvider components
+   - Properly nested SimpleAuthProvider and AuthProvider
+   - Ensured proper component hierarchy
+
+4. ✅ Verify import paths for all components
+   - Updated import paths to use @/ prefix for consistency
+   - Fixed paths in DashboardHeader and DashboardSidebar
+
+## Fixed Issues
+
+1. ✅ Added admin authentication system with username "klaasvaakie" and password "Leatherman@24"
+2. ✅ Added skip option for authentication
+3. ✅ Added admin mode indicators in the UI
+4. ✅ Fixed routing issues by properly configuring the router
+5. ✅ Added logout functionality that clears both auth systems
