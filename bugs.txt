@@ -20,6 +20,11 @@
    - Signup route is not being matched
    - Check AppRoutes component in App.tsx
 
+5. No routes matched location "/dashboard"
+   - Dashboard route is not being matched
+   - Routes need leading slashes for proper matching
+   - Fixed by adding leading slashes to all route paths in App.tsx
+
 ## Authentication Issues
 
 1. Possible issue with AuthProvider nesting

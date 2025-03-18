@@ -27,7 +27,6 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/lib/auth-context";
-import { useSimpleAuth } from "@/lib/simple-auth-context";
 
 interface DashboardHeaderProps {
   onMenuToggle?: () => void;
@@ -37,7 +36,6 @@ export default function DashboardHeader({
   onMenuToggle,
 }: DashboardHeaderProps) {
   const { user, signOut } = useAuth();
-  const { username, logout: simpleLogout } = useSimpleAuth();
   const [searchValue, setSearchValue] = useState("");
   const [notifications] = useState([
     { id: "1", title: "New feature: Cardiology AI Agent now available" },
@@ -49,11 +47,6 @@ export default function DashboardHeader({
   return (
     <div className="w-full h-16 border-b border-gray-100 bg-white flex items-center justify-between px-6 fixed top-0 z-50 shadow-sm">
       <div className="flex items-center gap-4 flex-1">
-        {username === "klaasvaakie" && (
-          <span className="ml-2 bg-amber-100 text-amber-800 text-xs px-2 py-1 rounded-full">
-            Admin Mode
-          </span>
-        )}
         <Button
           variant="ghost"
           size="icon"
@@ -139,11 +132,11 @@ export default function DashboardHeader({
           <DropdownMenuTrigger asChild>
             <Avatar className="h-8 w-8 hover:cursor-pointer">
               <AvatarImage
-                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email || username || "guest"}`}
-                alt={user?.email || username || "guest"}
+                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email || "user"}`}
+                alt={user?.email || "user"}
               />
               <AvatarFallback>
-                {(user?.email?.[0] || username?.[0] || "G").toUpperCase()}
+                {(user?.email?.[0] || "U").toUpperCase()}
               </AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
@@ -152,12 +145,7 @@ export default function DashboardHeader({
             className="rounded-xl border-none shadow-lg"
           >
             <DropdownMenuLabel className="text-xs text-gray-500">
-              {user?.email || username || "Guest"}
-              {username === "klaasvaakie" && (
-                <div className="text-amber-600 font-medium mt-1">
-                  Admin Account
-                </div>
-              )}
+              {user?.email || "User"}
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="cursor-pointer">
@@ -171,10 +159,7 @@ export default function DashboardHeader({
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="cursor-pointer"
-              onSelect={() => {
-                signOut();
-                simpleLogout();
-              }}
+              onSelect={() => signOut()}
             >
               <LogOut className="mr-2 h-4 w-4" />
               Log out

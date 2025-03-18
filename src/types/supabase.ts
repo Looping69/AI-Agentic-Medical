@@ -9,41 +9,151 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      ai_agents: {
+      agent_collaborations: {
         Row: {
-          capabilities: string[] | null
+          consultation_id: string
           created_at: string | null
-          description: string | null
-          icon: string | null
           id: string
-          is_premium: boolean | null
-          name: string
-          specialties: string[] | null
+          status: string
+          summary: string | null
           updated_at: string | null
         }
         Insert: {
-          capabilities?: string[] | null
+          consultation_id: string
           created_at?: string | null
-          description?: string | null
-          icon?: string | null
           id?: string
-          is_premium?: boolean | null
-          name: string
-          specialties?: string[] | null
+          status: string
+          summary?: string | null
           updated_at?: string | null
         }
         Update: {
-          capabilities?: string[] | null
+          consultation_id?: string
+          created_at?: string | null
+          id?: string
+          status?: string
+          summary?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_collaborations_consultation_id_fkey"
+            columns: ["consultation_id"]
+            isOneToOne: false
+            referencedRelation: "consultations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_messages: {
+        Row: {
+          agent_id: string | null
+          collaboration_id: string
+          content: string
+          created_at: string | null
+          id: string
+          role: string
+        }
+        Insert: {
+          agent_id?: string | null
+          collaboration_id: string
+          content: string
+          created_at?: string | null
+          id?: string
+          role: string
+        }
+        Update: {
+          agent_id?: string | null
+          collaboration_id?: string
+          content?: string
+          created_at?: string | null
+          id?: string
+          role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_messages_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "ai_agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_messages_collaboration_id_fkey"
+            columns: ["collaboration_id"]
+            isOneToOne: false
+            referencedRelation: "agent_collaborations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_agents: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          is_premium: boolean | null
+          name: string
+          specialty: string
+          updated_at: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
           created_at?: string | null
           description?: string | null
-          icon?: string | null
+          id?: string
+          is_premium?: boolean | null
+          name: string
+          specialty: string
+          updated_at?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          description?: string | null
           id?: string
           is_premium?: boolean | null
           name?: string
-          specialties?: string[] | null
+          specialty?: string
           updated_at?: string | null
         }
         Relationships: []
+      }
+      consultation_agents: {
+        Row: {
+          agent_id: string
+          consultation_id: string
+          created_at: string | null
+          id: string
+        }
+        Insert: {
+          agent_id: string
+          consultation_id: string
+          created_at?: string | null
+          id?: string
+        }
+        Update: {
+          agent_id?: string
+          consultation_id?: string
+          created_at?: string | null
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consultation_agents_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "ai_agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "consultation_agents_consultation_id_fkey"
+            columns: ["consultation_id"]
+            isOneToOne: false
+            referencedRelation: "consultations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       consultation_messages: {
         Row: {
@@ -70,61 +180,37 @@ export type Database = {
           id?: string
           role?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "consultation_messages_agent_id_fkey"
-            columns: ["agent_id"]
-            isOneToOne: false
-            referencedRelation: "ai_agents"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "consultation_messages_consultation_id_fkey"
-            columns: ["consultation_id"]
-            isOneToOne: false
-            referencedRelation: "consultations"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       consultations: {
         Row: {
-          agents: string[]
           created_at: string | null
-          diagnosis: string | null
+          description: string | null
           doctor_id: string
           id: string
-          notes: string | null
-          patient_id: string
-          recommendations: string[] | null
+          patient_id: string | null
           status: string
-          symptoms: string[] | null
+          title: string
           updated_at: string | null
         }
         Insert: {
-          agents: string[]
           created_at?: string | null
-          diagnosis?: string | null
+          description?: string | null
           doctor_id: string
           id?: string
-          notes?: string | null
-          patient_id: string
-          recommendations?: string[] | null
-          status?: string
-          symptoms?: string[] | null
+          patient_id?: string | null
+          status: string
+          title: string
           updated_at?: string | null
         }
         Update: {
-          agents?: string[]
           created_at?: string | null
-          diagnosis?: string | null
+          description?: string | null
           doctor_id?: string
           id?: string
-          notes?: string | null
-          patient_id?: string
-          recommendations?: string[] | null
+          patient_id?: string | null
           status?: string
-          symptoms?: string[] | null
+          title?: string
           updated_at?: string | null
         }
         Relationships: [
@@ -139,7 +225,51 @@ export type Database = {
             foreignKeyName: "consultations_patient_id_fkey"
             columns: ["patient_id"]
             isOneToOne: false
-            referencedRelation: "patients"
+            referencedRelation: "patient_records"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      patient_records: {
+        Row: {
+          created_at: string | null
+          date_of_birth: string | null
+          doctor_id: string
+          first_name: string
+          gender: string | null
+          id: string
+          last_name: string
+          medical_history: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          date_of_birth?: string | null
+          doctor_id: string
+          first_name: string
+          gender?: string | null
+          id?: string
+          last_name: string
+          medical_history?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          date_of_birth?: string | null
+          doctor_id?: string
+          first_name?: string
+          gender?: string | null
+          id?: string
+          last_name?: string
+          medical_history?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "patient_records_doctor_id_fkey"
+            columns: ["doctor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -199,15 +329,7 @@ export type Database = {
           phone?: string | null
           updated_at?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "patients_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -216,7 +338,7 @@ export type Database = {
           first_name: string | null
           id: string
           last_name: string | null
-          role: string
+          role: string | null
           specialty: string | null
           updated_at: string | null
         }
@@ -226,7 +348,7 @@ export type Database = {
           first_name?: string | null
           id: string
           last_name?: string | null
-          role?: string
+          role?: string | null
           specialty?: string | null
           updated_at?: string | null
         }
@@ -236,7 +358,7 @@ export type Database = {
           first_name?: string | null
           id?: string
           last_name?: string | null
-          role?: string
+          role?: string | null
           specialty?: string | null
           updated_at?: string | null
         }
@@ -245,37 +367,25 @@ export type Database = {
       subscriptions: {
         Row: {
           created_at: string | null
-          current_period_end: string | null
-          current_period_start: string | null
           id: string
           plan: string
           status: string
-          stripe_customer_id: string | null
-          stripe_subscription_id: string | null
           updated_at: string | null
           user_id: string
         }
         Insert: {
           created_at?: string | null
-          current_period_end?: string | null
-          current_period_start?: string | null
           id?: string
-          plan?: string
-          status?: string
-          stripe_customer_id?: string | null
-          stripe_subscription_id?: string | null
+          plan: string
+          status: string
           updated_at?: string | null
           user_id: string
         }
         Update: {
           created_at?: string | null
-          current_period_end?: string | null
-          current_period_start?: string | null
           id?: string
           plan?: string
           status?: string
-          stripe_customer_id?: string | null
-          stripe_subscription_id?: string | null
           updated_at?: string | null
           user_id?: string
         }

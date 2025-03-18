@@ -13,9 +13,9 @@ import {
   Activity,
   Stethoscope,
   Crown,
+  LogOut,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useSimpleAuth } from "@/lib/simple-auth-context";
 import { useAuth } from "@/lib/auth-context";
 
 interface NavItem {
@@ -23,6 +23,7 @@ interface NavItem {
   label: string;
   href: string;
   isActive?: boolean;
+  isPremium?: boolean;
 }
 
 interface SidebarProps {
@@ -85,17 +86,8 @@ export default function DashboardSidebar({
   isOpen = true,
   onClose = () => {},
 }: SidebarProps) {
-  const { username, logout: simpleLogout } = useSimpleAuth();
   const { signOut } = useAuth();
 
-  // If admin is logged in, treat as premium
-  const effectiveSubscription =
-    username === "klaasvaakie" ? "premium" : userSubscription;
-
-  const handleLogout = () => {
-    signOut();
-    simpleLogout();
-  };
   return (
     <div
       className={`${isOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0 fixed md:sticky top-0 left-0 z-40 w-64 h-screen bg-white shadow-md border-r border-gray-100 flex flex-col transition-transform duration-300 ease-in-out`}
@@ -130,23 +122,11 @@ export default function DashboardSidebar({
         </Button>
       </div>
 
-      {username === "klaasvaakie" && (
-        <div className="px-4 py-2 mx-4 mb-2 bg-amber-50 border border-amber-100 rounded-lg">
-          <div className="text-amber-800 text-sm font-medium flex items-center">
-            <span className="w-2 h-2 bg-amber-500 rounded-full mr-2"></span>
-            Admin Mode Active
-          </div>
-          <div className="text-amber-700 text-xs mt-1">
-            All features unlocked
-          </div>
-        </div>
-      )}
-
       <ScrollArea className="flex-1 px-4">
         <div className="space-y-1.5">
           {items.map((item) => {
             const isPremiumLocked =
-              item.isPremium && effectiveSubscription === "free";
+              item.isPremium && userSubscription === "free";
 
             return (
               <Link to={isPremiumLocked ? "#" : item.href} key={item.label}>
@@ -172,7 +152,6 @@ export default function DashboardSidebar({
               </Link>
             );
           })}
-          ;
         </div>
 
         <Separator className="my-4 bg-gray-100" />
@@ -211,7 +190,7 @@ export default function DashboardSidebar({
         </div>
       </ScrollArea>
 
-      {effectiveSubscription === "free" && (
+      {userSubscription === "free" && (
         <div className="p-4 mx-4 mb-4 bg-secondary rounded-xl">
           <div className="flex items-center gap-3 mb-2">
             <Crown className="h-5 w-5 text-primary" />
@@ -243,24 +222,10 @@ export default function DashboardSidebar({
         <Button
           variant="ghost"
           className="w-full justify-start gap-3 h-10 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-100 mb-1.5"
-          onClick={handleLogout}
+          onClick={signOut}
         >
           <span className="text-gray-500">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-              <polyline points="16 17 21 12 16 7" />
-              <line x1="21" y1="12" x2="9" y2="12" />
-            </svg>
+            <LogOut size={20} />
           </span>
           Log out
         </Button>
